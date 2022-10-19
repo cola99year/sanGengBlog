@@ -10,4 +10,8 @@ import com.cola.domain.entity.Article;
  */
 public interface ArticleService extends IService<Article> {
      ResponseResult hotArticle();
+
+     ResponseResult articleList(Integer pageNum, Integer pageSize, Long categoryId);
+
+     ResponseResult getArticleDetail(Long id);
 }

@@ -12,15 +12,26 @@ public enum AppHttpCodeEnum {
     EMAIL_EXIST(503, "邮箱已存在"),
     REQUIRE_USERNAME(504, "必需填写用户名"),
     LOGIN_ERROR(505,"用户名或密码错误");
-
+    /**
+     * 属性
+     */
     int code;
     String msg;
 
+    /**
+     * 全参构造器
+     * @param code
+     * @param errorMessage
+     */
     AppHttpCodeEnum(int code, String errorMessage){
         this.code = code;
         this.msg = errorMessage;
     }
 
+    /**
+     * set和get
+     * @return
+     */
     public int getCode() {
         return code;
     }

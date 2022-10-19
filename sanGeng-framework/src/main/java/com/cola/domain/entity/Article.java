@@ -1,5 +1,6 @@
 package com.cola.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,12 @@ public class Article {
      * 所属分类id
      */
     private Long categoryId;
+    /*
+    * 分类名称，注解表明他在文章表中不存在该字段！
+    */
+    @TableField(exist = false)
+    private String categoryName;
+
     /**
      * 缩略图
      */

@@ -1,0 +1,3 @@
+com\cola\controller\LinkController.class
+com\cola\controller\BlogLoginController.class
+com\cola\filter\JwtAuthenticationTokenFilter.class
