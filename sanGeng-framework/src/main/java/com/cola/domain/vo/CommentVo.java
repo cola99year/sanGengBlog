@@ -1,6 +1,7 @@
 package com.cola.domain.vo;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author: cola99year
@@ -33,5 +34,6 @@ public class CommentVo {
     private Long createBy;
 
     private Date createTime;
-
+    //子评论
+    private List<CommentVo> children;
 }

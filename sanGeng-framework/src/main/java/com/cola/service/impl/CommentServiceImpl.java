@@ -31,7 +31,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     public ResponseResult commentList(Long articleId, Integer pageNum, Integer pageSize) {
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         //查哪一篇文章的评论？
-        queryWrapper.eq(Comment::getId,articleId);
+        queryWrapper.eq(Comment::getArticleId,articleId);
         //先查询是根评论的
         queryWrapper.eq(Comment::getRootId, SystemConstants.COMMENT_ISROOT);
         //分页查询
@@ -39,10 +39,26 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         //Page<Comment> page = new Page(pageNum,pageSize);
         page(page,queryWrapper);
         List<CommentVo> commentVoList = toCommentVoList(page.getRecords());
+        for (CommentVo commentVo : commentVoList) {
+            //查询子评论，很多子评论返回的是list结果集
+           List<CommentVo> children = getChildren(commentVo.getId());
+           //赋值
+            commentVo.setChildren(children);
+        }
         PageVo pageVo = new PageVo(commentVoList, page.getTotal());
         return ResponseResult.okResult(pageVo);
     }
 
+    //获取子评论
+    private List<CommentVo> getChildren(Long id) {
+        //查询评论的根id等于该参数id的评论结果集并返回
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Comment::getRootId,id).orderByAsc(Comment::getCreateTime);
+        List<Comment> list = list(queryWrapper);
+        List<CommentVo> commentVos = toCommentVoList(list);
+        return commentVos;
+    }
+    //给vo类新增的结果字段赋值
     private List<CommentVo> toCommentVoList(List<Comment> commentList){
         List<CommentVo> commentVos = BeanCopyUtils.copyBeanList(commentList, CommentVo.class);
         for (CommentVo commentVo:commentVos) {
