@@ -23,9 +23,9 @@ public class User  {
     //主键@TableId
     private Long id;
 
-    //用户名
+    //用户名,这个是登录名
     private String userName;
-    //昵称
+    //昵称，这个是网名
     private String nickName;
     //密码
     private String password;
