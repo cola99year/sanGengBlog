@@ -1,6 +1,7 @@
 package com.cola.config;
 
 import com.cola.filter.JwtAuthenticationTokenFilter;
+import com.cola.handler.security.AccessDeniedHandlerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,10 +19,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //注入登录校验过滤器
     @Autowired
     private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
-    //认证异常
+    //认证异常处理器
     @Autowired
     AuthenticationEntryPoint authenticationEntryPoint;
-
+    //授权异常处理器
+    @Autowired
+    AccessDeniedHandlerImpl accessDeniedHandler;
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -39,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 对于登录接口 允许匿名访问
                 .antMatchers("/login").anonymous()
                 //指定该api需要认证校验！
-                .antMatchers("/link/getAllLink").authenticated()
+                .antMatchers("/logout").authenticated()
                 //除上面外的所有请求不需认证即可访问！
                 .anyRequest().permitAll();
                 // 除上面外的所有请求全部需要鉴权认证
@@ -47,9 +50,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         //允许跨域
         http.cors();
+        //关闭默认的注销功能
+        http.logout().disable();
         //把token校验过滤器添加到过滤器链中，目标是在UsernamePasswordAuthenticationFilter.class之前
         http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
-        http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
+        http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler);
     }
 
     //重写方法来暴露AuthenticationManager这个bean，注入容器
