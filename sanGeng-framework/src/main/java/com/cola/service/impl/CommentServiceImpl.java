@@ -8,12 +8,15 @@ import com.cola.domain.ResponseResult;
 import com.cola.domain.entity.Comment;
 import com.cola.domain.vo.CommentVo;
 import com.cola.domain.vo.PageVo;
+import com.cola.enums.AppHttpCodeEnum;
+import com.cola.exception.SystemException;
 import com.cola.mapper.CommentMapper;
 import com.cola.service.CommentService;
 import com.cola.service.UserService;
 import com.cola.utils.BeanCopyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -28,12 +31,14 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     @Autowired
     private UserService userService;
     @Override
-    public ResponseResult commentList(Long articleId, Integer pageNum, Integer pageSize) {
+    public ResponseResult commentList(String type, Long articleId, Integer pageNum, Integer pageSize) {
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         //查哪一篇文章的评论？
-        queryWrapper.eq(Comment::getArticleId,articleId);
+        queryWrapper.eq(SystemConstants.ARTICLE_COMMENT.equals("type"),Comment::getArticleId,articleId);
         //先查询是根评论的
         queryWrapper.eq(Comment::getRootId, SystemConstants.COMMENT_ISROOT);
+        //wher筛选：是文章评论还是友链评论来筛选！
+        queryWrapper.eq(Comment::getType,type);
         //分页查询
         Page page = new Page(pageNum,pageSize);
         //Page<Comment> page = new Page(pageNum,pageSize);
@@ -47,6 +52,17 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         }
         PageVo pageVo = new PageVo(commentVoList, page.getTotal());
         return ResponseResult.okResult(pageVo);
+    }
+
+    //发表评论
+    @Override
+    public ResponseResult addComment(Comment comment) {
+        //评论内容不能为空，还需更新数据库表中的其他字段！
+        if(!StringUtils.hasText(comment.getContent())){
+            throw new SystemException(AppHttpCodeEnum.CONTENT_NOT_NULL);
+        }
+        save(comment);
+        return ResponseResult.okResult();
     }
 
     //获取子评论

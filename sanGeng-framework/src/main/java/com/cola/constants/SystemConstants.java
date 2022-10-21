@@ -16,7 +16,10 @@ public class SystemConstants
      * 友链正常状态
      */
     public static final String LINK_STATUS_NORMAL = "0";
+    //1代表友链评论
+    public static final String LINK_COMMENT = "1";
+    //0代表文章评论
+    public static final String ARTICLE_COMMENT = "0";
 
     public static final int COMMENT_ISROOT = -1;
-
 }
