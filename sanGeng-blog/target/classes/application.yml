@@ -12,11 +12,11 @@ spring:
     host: 120.25.249.93 #指定redis所在的host
     password: Qq8981969.. #设置redis密码
     port: 6379
-#  图片上传的
-#  servlet:
-#    multipart:
-#      max-file-size: 2MB
-#      max-request-size: 5MB
+#  文件上传的大小限制：multipart类型
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 5MB
 
 mybatis-plus:
   configuration:
@@ -32,4 +32,8 @@ mybatis-plus:
       id-type: auto
       table-prefix: sg_
 
-
+oss:
+  accessKey: DzwofQVACHviZl7CRk9KSIcSBlIm0Y7alBs42iuT
+  secretKey: Q90p3rJZ1mPl27D0KNW62EcwN7hfOrCLtuiEc6tF
+  bucket: sg-colablog
+  domainName: http://rk54obks4.hn-bkt.clouddn.com/
