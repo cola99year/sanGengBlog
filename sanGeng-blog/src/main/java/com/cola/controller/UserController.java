@@ -1,5 +1,6 @@
 package com.cola.controller;
 
+import com.cola.annotation.AopLog;
 import com.cola.domain.ResponseResult;
 import com.cola.domain.entity.User;
 import com.cola.service.UserService;
@@ -21,16 +22,18 @@ public class UserController {
      * @return
      */
     @GetMapping("/userInfo")
+    @AopLog(businessName = "查看了个人中心")
     public ResponseResult userInfo(){
         return userService.userInfo();
     }
 
     /**
-     * 更新 个人信息
+     * 更新个人信息
      * @param user  接收的前端信息
      * @return
      */
     @PutMapping("/userInfo")
+    @AopLog(businessName = "更新个人信息")
     public ResponseResult updateUserInfo(@RequestBody User user){
         return userService.updateUserInfo(user);
     }
