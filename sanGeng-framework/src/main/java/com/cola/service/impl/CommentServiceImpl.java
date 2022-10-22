@@ -37,7 +37,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         queryWrapper.eq(SystemConstants.ARTICLE_COMMENT.equals("type"),Comment::getArticleId,articleId);
         //先查询是根评论的
         queryWrapper.eq(Comment::getRootId, SystemConstants.COMMENT_ISROOT);
-        //wher筛选：是文章评论还是友链评论来筛选！
+        //where筛选：是文章评论还是友链评论来筛选！
         queryWrapper.eq(Comment::getType,type);
         //分页查询
         Page page = new Page(pageNum,pageSize);
