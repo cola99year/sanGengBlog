@@ -9,8 +9,8 @@ spring:
 
   redis:
     database: 0
-    host: 120.25.249.93 #指定redis所在的host
-    password: Qq8981969.. #设置redis密码
+    host: 114.132.242.3 #指定redis所在的host
+    password: redis502509.. #设置redis密码
     port: 6379
 #  文件上传的大小限制：multipart类型
   servlet:

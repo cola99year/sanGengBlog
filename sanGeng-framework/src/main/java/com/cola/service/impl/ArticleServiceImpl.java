@@ -14,6 +14,7 @@ import com.cola.mapper.ArticleMapper;
 import com.cola.service.ArticleService;
 import com.cola.service.CategoryService;
 import com.cola.utils.BeanCopyUtils;
+import com.cola.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Override
     public ResponseResult hotArticle() {
@@ -75,11 +78,33 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         return ResponseResult.okResult(pageVo);
     }
 
+    /**
+     * 文章详情
+     * 文章浏览量：读取redis缓存的！
+     * @param id
+     * @return
+     */
     @Override
     public ResponseResult getArticleDetail(Long id) {
         Article article = getById(id);
+        //文章浏览量：读取redis缓存的！
+        Integer viewcount = (Integer) redisUtil.hget("article:viewCount", id.toString());
+        article.setViewCount(viewcount.longValue());
+        //转成vo层
         ArticleDetailVo articleDetailVo = BeanCopyUtils.copyBean(article, ArticleDetailVo.class);
         articleDetailVo.setCategoryName(categoryService.getById(articleDetailVo.getCategoryId()).getName());
         return ResponseResult.okResult(articleDetailVo);
+    }
+
+    /**
+     *增加文章浏览量：更新Redis缓存的
+     * @param id
+     * @return
+     */
+    @Override
+    public ResponseResult updateViewCount(Long id) {
+        //更新redis中对应 id的浏览量
+        redisUtil.hincr("article:viewCount",id.toString(),1);
+        return ResponseResult.okResult();
     }
 }
